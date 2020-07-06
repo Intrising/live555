@@ -42,7 +42,7 @@ ADTSAudioFileServerMediaSubsession
 
 FramedSource* ADTSAudioFileServerMediaSubsession
 ::createNewStreamSource(unsigned /*clientSessionId*/, unsigned& estBitrate) {
-  estBitrate = 96; // kbps, estimate
+  estBitrate = 960; // kbps, estimate
 
   return ADTSAudioFileSource::createNew(envir(), fFileName);
 }

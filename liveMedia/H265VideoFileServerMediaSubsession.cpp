@@ -102,7 +102,7 @@ char const* H265VideoFileServerMediaSubsession::getAuxSDPLine(RTPSink* rtpSink, 
 }
 
 FramedSource* H265VideoFileServerMediaSubsession::createNewStreamSource(unsigned /*clientSessionId*/, unsigned& estBitrate) {
-  estBitrate = 500; // kbps, estimate
+  estBitrate = 10000; // kbps, estimate
 
   // Create the video source:
   ByteStreamFileSource* fileSource = ByteStreamFileSource::createNew(envir(), fFileName);
