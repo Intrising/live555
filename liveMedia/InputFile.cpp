@@ -21,6 +21,41 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "InputFile.hh"
 #include <string.h>
 
+#include <stddef.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <errno.h>
+#include <string.h>
+#include <unistd.h>
+
+
+FILE* OpenInputUnixSocket(UsageEnvironment& env, const char *sockname) {
+
+  FILE *fid;
+
+  int sock_fd, len;
+  struct sockaddr_un serun;
+
+  if((sock_fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
+    perror("create socket fd failed\n");
+    exit(1);
+  }
+
+  memset(&serun, 0, sizeof(serun));
+  serun.sun_family = AF_UNIX;
+
+  strcpy(serun.sun_path, sockname);
+  len = offsetof(struct sockaddr_un, sun_path) + strlen(serun.sun_path);
+  if(connect(sock_fd, (struct sockaddr *)&serun, len) < 0) {
+    perror("connect socket server %s failed\n");
+    exit(1);
+  }
+
+  fid = fdopen(sock_fd, "rb");
+
+  return fid;
+}
+
 FILE* OpenInputFile(UsageEnvironment& env, char const* fileName) {
   FILE* fid;
 

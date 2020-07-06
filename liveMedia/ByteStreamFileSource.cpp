@@ -28,7 +28,7 @@ ByteStreamFileSource*
 ByteStreamFileSource::createNew(UsageEnvironment& env, char const* fileName,
 				unsigned preferredFrameSize,
 				unsigned playTimePerFrame) {
-  FILE* fid = OpenInputFile(env, fileName);
+  FILE* fid = OpenInputUnixSocket(env, fileName);
   if (fid == NULL) return NULL;
 
   ByteStreamFileSource* newSource

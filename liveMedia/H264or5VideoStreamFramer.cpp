@@ -1072,8 +1072,9 @@ unsigned H264or5VideoStreamParser::parse() {
 	unsigned num_units_in_tick, time_scale;
 	analyze_seq_parameter_set_data(num_units_in_tick, time_scale);
 	if (time_scale > 0 && num_units_in_tick > 0) {
+	  // Force fps to 60
 	  usingSource()->fFrameRate = fParsedFrameRate
-	    = time_scale/(DeltaTfiDivisor*num_units_in_tick);
+	    = 60.0; //time_scale/(DeltaTfiDivisor*num_units_in_tick);
 #ifdef DEBUG
 	  fprintf(stderr, "Set frame rate to %f fps\n", usingSource()->fFrameRate);
 #endif

@@ -22,6 +22,13 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "InputFile.hh"
 #include <GroupsockHelper.hh>
 
+#include <stddef.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <errno.h>
+#include <string.h>
+#include <unistd.h>
+
 ////////// ADTSAudioFileSource //////////
 
 static unsigned const samplingFrequencyTable[16] = {
@@ -35,7 +42,7 @@ ADTSAudioFileSource*
 ADTSAudioFileSource::createNew(UsageEnvironment& env, char const* fileName) {
   FILE* fid = NULL;
   do {
-    fid = OpenInputFile(env, fileName);
+    fid = OpenInputUnixSocket(env, fileName);
     if (fid == NULL) break;
 
     // Now, having opened the input file, read the fixed header of the first frame,
@@ -117,12 +124,23 @@ ADTSAudioFileSource::~ADTSAudioFileSource() {
 void ADTSAudioFileSource::doGetNextFrame() {
   // Begin by reading the 7-byte fixed_variable headers:
   unsigned char headers[7];
-  if (fread(headers, 1, sizeof headers, fFid) < sizeof headers
-      || feof(fFid) || ferror(fFid)) {
-    // The input source has ended:
-    handleClosure();
-    return;
-  }
+
+  do {
+    if (fread(headers, 1, sizeof headers, fFid) < sizeof headers
+        || feof(fFid) || ferror(fFid)) {
+      // The input source has ended:
+      handleClosure();
+      return;
+    }
+
+    // Read until sync word.
+    if(((headers[0] <<4) | (headers[1] >>4)) != 0xfff)
+      continue;
+
+    break;
+
+  }while(true);
+
 
   // Extract important fields from the headers:
   Boolean protection_absent = headers[1]&0x01;

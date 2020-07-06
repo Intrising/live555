@@ -46,6 +46,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include <sys/stat.h>
 #endif
 
+FILE* OpenInputUnixSocket(UsageEnvironment& env, char const* sockname);
+
 FILE* OpenInputFile(UsageEnvironment& env, char const* fileName);
 
 void CloseInputFile(FILE* fid);
