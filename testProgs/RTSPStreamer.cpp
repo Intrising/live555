@@ -61,7 +61,8 @@ int main(int argc, char** argv) {
 
   const Port rtpPort(rtpPortNum);
   const Port rtcpPort(rtcpPortNum);
-
+  const Port rtpAudioPort(rtpPortNum+2);
+  const Port rtcpAudioPort(rtcpPortNum+2);
   // Create a 'H265 Video RTP' sink from the RTP 'groupsock':
   OutPacketBuffer::maxSize = 5000000;
   // Create (and start) a 'RTCP instance' for this RTP sink:
@@ -76,9 +77,9 @@ int main(int argc, char** argv) {
   Groupsock rtcpGroupsock(*env, destinationAddress, rtcpPort, ttl);
   rtcpGroupsock.multicastSendOnly(); // we're a SSM source
 
-  Groupsock a_rtpGroupsock(*env, destinationAddress, rtpPort, ttl);
+  Groupsock a_rtpGroupsock(*env, destinationAddress, rtpAudioPort, ttl);
   a_rtpGroupsock.multicastSendOnly(); // we're a SSM source
-  Groupsock a_rtcpGroupsock(*env, destinationAddress, rtcpPort, ttl);
+  Groupsock a_rtcpGroupsock(*env, destinationAddress, rtcpAudioPort, ttl);
   a_rtcpGroupsock.multicastSendOnly(); // we're a SSM source
 
 
