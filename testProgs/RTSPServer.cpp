@@ -53,7 +53,12 @@ int main(int argc, char** argv) {
 
   // Create 'groupsocks' for RTP and RTCP:
   struct in_addr destinationAddress;
-  destinationAddress.s_addr = our_inet_addr(multicast_target.c_str());
+
+
+  if(multicast_enable)
+    destinationAddress.s_addr = our_inet_addr(multicast_target.c_str());
+  else 
+    destinationAddress.s_addr = chooseRandomIPv4SSMAddress(*env);
 
   const unsigned short rtpPortNum = multicast_port;
   const unsigned short rtcpPortNum = rtpPortNum+1;
@@ -84,7 +89,7 @@ int main(int argc, char** argv) {
 
 
 
-  if(multicast_enable) {
+//  if(multicast_enable) {
     RTCPInstance* rtcp
     = RTCPInstance::createNew(*env, &rtcpGroupsock,
 			    estimatedSessionBandwidth, CNAME,
@@ -122,6 +127,7 @@ int main(int argc, char** argv) {
 
     sms->addSubsession(PassiveServerMediaSubsession::createNew(*videoSink, rtcp));
     sms->addSubsession(PassiveServerMediaSubsession::createNew(*audioSink, audio_rtcp));
+/*  Performance is not ok.
   }
   else {
     sms->addSubsession(H265VideoFileServerMediaSubsession
@@ -129,7 +135,7 @@ int main(int argc, char** argv) {
     sms->addSubsession(ADTSAudioFileServerMediaSubsession
 		       ::createNew(*env, "/tmp/audio.sock", true));
   }
-
+*/
 
 
   // Note: This starts RTCP running automatically
@@ -163,7 +169,7 @@ int main(int argc, char** argv) {
     }
   }
 
-  if(multicast_enable)
+  //if(multicast_enable)
     play();
 
   env->taskScheduler().doEventLoop(); // does not return
