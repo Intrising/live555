@@ -55,10 +55,10 @@ int main(int argc, char** argv) {
   struct in_addr destinationAddress;
 
 
-  if(multicast_enable)
-    destinationAddress.s_addr = our_inet_addr(multicast_target.c_str());
-  else 
-    destinationAddress.s_addr = chooseRandomIPv4SSMAddress(*env);
+//  if(multicast_enable)
+//    destinationAddress.s_addr = our_inet_addr(multicast_target.c_str());
+//  else
+  destinationAddress.s_addr = chooseRandomIPv4SSMAddress(*env);
 
   const unsigned short rtpPortNum = multicast_port;
   const unsigned short rtcpPortNum = rtpPortNum+1;
